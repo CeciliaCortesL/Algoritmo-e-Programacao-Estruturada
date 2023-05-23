@@ -1,0 +1,244 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define maxUsuario 1000
+#define maxNome 100
+#define maxEmail 100
+#define maxEndereco 100
+
+typedef struct
+{
+    int id;
+    char nome[maxNome];
+    char email[maxEmail];
+    char sexo[maxNome];
+    char endereco[maxEndereco];
+    double altura;
+    int vacina;
+} usuario;
+
+usuario usuarios[maxUsuario];
+int quantidadeUsuarios = 0;
+
+int gerarId()
+{
+    return rand() % 1000 + 1;
+}
+
+void cadastrarUsuario()
+{
+    if (quantidadeUsuarios == maxUsuario)
+    {
+        printf("\n Limite de usuarios cadastrados atingido. ");
+        return;
+    }
+
+    usuario novoUsuario;
+    novoUsuario.id = gerarId();
+
+    printf("\n Nome: ");
+    scanf("%s", novoUsuario.nome);
+
+    printf("\n Email: ");
+    scanf("%s", novoUsuario.email);
+
+    printf("\n Sexo (Feminino/Masculino/Indiferente): ");
+    scanf("%s", novoUsuario.sexo);
+
+    printf("\n Endereco: ");
+    scanf("%s", novoUsuario.endereco);
+
+    printf("\n ALtura: ");
+    scanf("%lf", &novoUsuario.altura);
+
+    printf("\n Vacina (1 para sim e 0 para nao): ");
+    scanf("%d", &novoUsuario.vacina);
+
+    usuarios[quantidadeUsuarios++] = novoUsuario;
+}
+
+void editarUsuario()
+{
+    int id;
+    printf("\n Digite o ID do usuario para editar: ");
+    scanf("%d", &id);
+
+    for (int i = 0; i < quantidadeUsuarios; i++)
+    {
+        if (usuarios[i].id == id)
+        {
+
+            printf("\n Nome: ");
+            scanf("%s", usuarios[i].nome);
+
+            printf("\n Email: ");
+            scanf("%s", usuarios[i].email);
+
+            printf("\n Sexo (Feminino/Masculino/Indiferente): ");
+            scanf("%s", usuarios[i].sexo);
+
+            printf("\n Endereco: ");
+            scanf("%s", usuarios[i].endereco);
+
+            printf("\n ALtura: ");
+            scanf("%lf", &usuarios[i].altura);
+
+            printf("\n Vacina (1 para sim e 0 para nao): ");
+            scanf("%d", &usuarios[i].vacina);
+
+            return;
+        }
+    }
+    printf("\n Usuario nao encontrado.");
+}
+
+void excluirUsuario()
+{
+    int id;
+    printf("\n Digite o ID do usuario a ser excluido: ");
+    scanf("%d", &id);
+
+    for (int i = 0; i < quantidadeUsuarios; i++)
+    {
+        if (usuarios[i].id == id)
+        {
+            for (int j = i; j < quantidadeUsuarios - 1; j++)
+            {
+                usuarios[j] = usuarios[j + 1];
+            }
+            quantidadeUsuarios--;
+            return;
+        }
+    }
+    printf("\n Usuario nao encontrado.");
+}
+
+void buscarUsuario()
+{
+    char email[maxEmail];
+    printf("\n Digite o email do usuario: ");
+    scanf("%s", email);
+
+    for (int i = 0; i < quantidadeUsuarios; i++)
+    {
+        if (strcmp(usuarios[i].email, email) == 0)
+        {
+            printf("\n ID: %d", usuarios[i].id);
+            printf("\n Nome: %s", usuarios[i].nome);
+            printf("\n Email: %s", usuarios[i].email);
+            printf("\n Sexo: %s", usuarios[i].sexo);
+            printf("\n Endereco: %s", usuarios[i].endereco);
+            printf("\n Altura: %.2lf", usuarios[i].altura);
+            printf("\n Vacina: %d", usuarios[i].vacina);
+            return;
+        }
+    }
+    printf("\n Usuario nao encontrado.");
+}
+
+void imprimirUsuarios()
+{
+    printf("\n Usuarios cadastrados: ");
+
+    for (int i = 0; i < quantidadeUsuarios; i++)
+    {
+        printf("\n ID: %d", usuarios[i].id);
+        printf("\n Nome: %s", usuarios[i].nome);
+        printf("\n Email: %s", usuarios[i].email);
+        printf("\n Sexo: %s", usuarios[i].sexo);
+        printf("Endereco: %s", usuarios[i].endereco);
+        printf("\n Altura: %.2lf", usuarios[i].altura);
+        printf("\n Vacina: %d", usuarios[i].vacina);
+    }
+}
+
+void fazerBackup()
+{
+    FILE *arquivo = fopen("usuarios.txt", "w");
+
+    if (arquivo == NULL)
+    {
+        printf("\n Erro ao criar arquivo de backup.");
+        return;
+    }
+
+    for (int i = 0; i < quantidadeUsuarios; i++)
+    {
+        fprintf(arquivo, "%d %s %s %s %s %.2lf %d", usuarios[i].id, usuarios[i].nome, usuarios[i].email, usuarios[i].sexo, usuarios[i].endereco, usuarios[i].altura, usuarios[i].vacina);
+    }
+
+    fclose(arquivo);
+}
+
+void restaurarBackup()
+{
+    FILE *arquivo = fopen("usuarios.txt", "r");
+
+    if (arquivo == NULL)
+    {
+        printf("\n Arquivo de backup nao encontrado.");
+        return;
+    }
+
+    quantidadeUsuarios = 0;
+    while (!feof(arquivo) && quantidadeUsuarios < maxUsuario)
+    {
+        usuario novoUsuario;
+
+        fsacf(arquivo, "%d %s %s %s %s %lf %d", &novoUsuario.id, novoUsuario.nome, novoUsuario.email,
+              novoUsuario.sexo, novoUsuario.endereco, &novoUsuario.altura, &novoUsuario.vacina);
+
+        usuarios[quantidadeUsuarios++] = novoUsuario;
+    }
+    fclose(arquivo);
+}
+
+int main()
+{
+    char opcao;
+
+    do
+    {
+        printf("\n 1- Cadastrar usuario");
+        printf("\n 2- Editar usuario");
+        printf("\n 3- Excluir usuario");
+        printf("\n 4- Buscar usuario pelo email");
+        printf("\n 5- Imprimir todos os usuarios");
+        printf("\n 6- Fazer backup dos usuarios");
+        printf("\n 7- Restaurar dados");
+        printf("\n 0- Sair");
+        printf("\n Escolha uma opcao: ");
+        scanf("%c", &opcao);
+
+        switch (opcao)
+        {
+        case 1:
+            cadastrarUsuario();
+            break;
+        case 2:
+            editarUsuario();
+            break;
+        case 3:
+            excluirUsuario();
+            break;
+        case 4:
+            buscarUsuario();
+            break;
+        case 5:
+            imprimirUsuarios();
+            break;
+        case 6:
+            fazerBackup();
+            break;
+        case 7:
+            restaurarBackup();
+            break;
+        case 0:
+            printf("Saindo");
+            break;
+        default:
+            printf("Opcao invalida");
+        }
+    } while (opcao != 0);
+}
