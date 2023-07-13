@@ -10,7 +10,7 @@ main()
     printf("\n Digite o preço do produto: ");
     scanf("%lf", &valor);
     fflush(stdin);
-    printf("\nDigite o número do estado: \n1-MG\n2-SP\n3-DF\n4-RJ");
+    printf("\nDigite o número do estado: \n1-MG\n2-SP\n3-DF\n4-RJ\n");
     scanf("%d", &estado);
 
     switch (estado)
